@@ -1,6 +1,5 @@
-
 import 'dart:math';
-
+import 'Controller.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -9,6 +8,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -33,8 +33,10 @@ class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
+
 enum TtsState { playing, stopped, paused, continued }
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
+
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool _hasSpeech = false;
   FlutterTts flutterTts;
   dynamic languages;
@@ -42,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
   double volume = 0.6;
   double pitch = 1.3;
   double rate = 0.8;
-
+  data dbot = data("", "", []);
   String _newVoiceText;
 
   TtsState ttsState = TtsState.stopped;
@@ -68,23 +70,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
       vsync: this,
     )..repeat();
     bubbleController = AnimationController(
-      duration: const Duration(seconds:20),
+      duration: const Duration(seconds: 20),
       vsync: this,
     );
-    backgroundAnimation = CurvedAnimation(parent: _backgroundController, curve: Curves.easeInOut)
-      ..addStatusListener((status){
-        if(status == AnimationStatus.completed){
-          setState(() {
-
-            _backgroundController.forward(from: 0);
+    backgroundAnimation =
+        CurvedAnimation(parent: _backgroundController, curve: Curves.easeInOut)
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                _backgroundController.forward(from: 0);
+              });
+            }
+            if (status == AnimationStatus.dismissed) {
+              setState(() {
+                _backgroundController.forward(from: 0);
+              });
+            }
           });
-        }
-        if(status == AnimationStatus.dismissed){
-          setState(() {
-            _backgroundController.forward(from: 0);
-          });
-        }
-      });
 
     bubbleController.forward();
 
@@ -92,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
 
     _getLanguages();
     _getEngines();
-
 
     flutterTts.setStartHandler(() {
       setState(() {
@@ -115,19 +116,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
       });
     });
 
-
-
     flutterTts.setErrorHandler((msg) {
       setState(() {
         print("error: $msg");
         ttsState = TtsState.stopped;
       });
     });
-
   }
 
   Future<void> initSpeechState() async {
-    bool hasSpeech = await speech.initialize(onError: errorListener, onStatus: statusListener );
+    bool hasSpeech = await speech.initialize(
+        onError: errorListener, onStatus: statusListener);
 
     if (!mounted) return;
     setState(() {
@@ -149,40 +148,63 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
   // flag to check if the bubbles are already present or not.
   bool areBubblesAdded = false;
 
-
   Animatable<Color> backgroundDark = TweenSequence<Color>([
     TweenSequenceItem(
       weight: 0.2,
       tween: ColorTween(
         begin: Colors.black,
-
+        end: Colors.black,
       ),
     ),
     TweenSequenceItem(
       weight: 0.2,
       tween: ColorTween(
-
+        begin: Colors.black,
         end: Colors.black,
       ),
     ),
-
   ]);
   Animatable<Color> backgroundNormal = TweenSequence<Color>([
     TweenSequenceItem(
-      weight:  0.5,
+      weight: 0.5,
       tween: ColorTween(
-        begin: Colors.blue[800],
+        begin: Colors.cyanAccent,
         end: Colors.black,
       ),
     ),
     TweenSequenceItem(
-      weight:  0.5,
+      weight: 0.5,
       tween: ColorTween(
         begin: Colors.black,
         end: Colors.blue[800],
       ),
     ),
+    TweenSequenceItem(
+      weight: 0.5,
+      tween: ColorTween(
+        begin: Colors.blue[800],
+        end: Colors.cyanAccent,
+      ),
+    ),
   ]);
+
+  Animatable<Color> backgroundNormal2 = TweenSequence<Color>([
+    TweenSequenceItem(
+      weight: 0.5,
+      tween: ColorTween(
+        begin: Colors.black,
+        end: Colors.blue[800],
+      ),
+    ),
+    TweenSequenceItem(
+      weight: 0.5,
+      tween: ColorTween(
+        begin: Colors.blue[800],
+        end: Colors.black,
+      ),
+    ),
+  ]);
+
   Animatable<Color> backgroundLight = TweenSequence<Color>([
     TweenSequenceItem(
       weight: 0.5,
@@ -200,183 +222,209 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
     ),
   ]);
 
-  AlignmentTween alignmentTop = AlignmentTween(begin: Alignment.bottomCenter,end: Alignment.bottomCenter);
-  AlignmentTween alignmentBottom = AlignmentTween(begin: Alignment.bottomLeft,end: Alignment.center);
+  AlignmentTween alignmentTop = AlignmentTween(
+      begin: Alignment.bottomCenter, end: Alignment.bottomCenter);
+  AlignmentTween alignmentBottom =
+      AlignmentTween(begin: Alignment.bottomLeft, end: Alignment.center);
 
-  bool mic =false;
-
+  bool mic = false;
 
   @override
   Widget build(BuildContext context) {
-
     // Add below to add bubbles intially.
 
     return AnimatedBuilder(
       animation: backgroundAnimation,
-      builder: (context, child){
+      builder: (context, child) {
         return Scaffold(
           backgroundColor: Colors.black,
           extendBody: false,
-          body:  Stack(
+          body: Stack(
             children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height/1.2,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: alignmentTop.evaluate(backgroundAnimation),
-                    end: Alignment.topCenter,
-                    colors: [
-                      backgroundDark.evaluate(backgroundAnimation),
-                      backgroundNormal.evaluate(backgroundAnimation),
-
-                    ],
-                  ),
-                ),
-              ),
-
-
-            ]
-                +[Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-
-              children: <Widget>[
-                SizedBox(
-                  height: 70,
-                ),
-                Center(
-                  child: Text(lastWords,textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 30,fontWeight: FontWeight.w800),),
-                ),
-                    Container(
-                      height: 250,
-
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 0,
-                        itemBuilder: (BuildContext context, int index) => Card(
-
-                          child: Center(child: Text('Dummy Card Text')),
-                        ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 1.2,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: alignmentTop.evaluate(backgroundAnimation),
+                        end: Alignment.topCenter,
+                        colors: [
+                          backgroundDark.evaluate(backgroundAnimation),
+                          backgroundNormal.evaluate(backgroundAnimation),
+                          backgroundNormal2.evaluate(backgroundAnimation),
+                        ],
                       ),
                     ),
-              Expanded(
-                child: SizedBox(),
-              ),
-
-              Center(
-                child: Text(lastWords,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w800,fontStyle: FontStyle.italic),),
-              ),
-                SizedBox(height: 15,),
-                Center(
-                  child:speech.isListening ?
-                      IconButton(
-                        icon: Icon(Icons.cancel,color: Colors.red,size: 40,),
-                        onPressed: (){
-                          cancelListening();
-                        },
-                      ):Container()
-                ),
-
-
-
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Visibility(
-                          child:IconButton(
-                            icon: Icon(Icons.camera_alt,color: Colors.white,size: 40),
+                  ),
+                ] +
+                [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 70,
+                      ),
+                      Center(
+                        child: Text(
+                          dbot.answer,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 0,
+                          itemBuilder: (BuildContext context, int index) =>
+                              Card(
+                            child: Center(child: Text('Dummy Card Text')),
                           ),
-                          visible:!(mic && speech.isListening),
                         ),
-
-                        InkWell(
-                          child: mic && speech.isListening?Image.asset("assets/mic_read.gif",height: 170,width: 170,):
-                          Image.asset("assets/mic_on.gif",height: 170,width: 170,),
-                          onTap: (){
-                            setState(() {
-                              mic=!mic;
-                              mic?startListening():stopListening();
-
-                            });
-                          },
-                          focusColor: Colors.black,
-                          highlightColor: Colors.black,
-                          splashColor: Colors.black,
+                      ),
+                      Expanded(
+                        child: SizedBox(),
+                      ),
+                      Center(
+                        child: Text(
+                          lastWords,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              fontStyle: FontStyle.italic),
                         ),
-                        Visibility(
-                          child:IconButton(
-                            icon: Icon(Icons.image,color: Colors.white,size: 40),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Center(
+                          child: speech.isListening
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                    size: 40,
+                                  ),
+                                  onPressed: () {
+                                    cancelListening();
+                                  },
+                                )
+                              : Container()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Visibility(
+                            child: IconButton(
+                              icon: Icon(Icons.camera_alt,
+                                  color: Colors.white, size: 40),
+                            ),
+                            visible: !(speech.isListening),
                           ),
-                          visible: !(mic && speech.isListening),
-                        ),
-
-                      ],
-                    ),
-
-              ],
-            ),],
+                          InkWell(
+                            child: speech.isListening
+                                ? Image.asset(
+                                    "assets/mic_read.gif",
+                                    height: 170,
+                                    width: 170,
+                                  )
+                                : Image.asset(
+                                    "assets/mic_on.gif",
+                                    height: 170,
+                                    width: 170,
+                                  ),
+                            onTap: () {
+                              setState(() {
+                                mic = !mic;
+                                mic ? startListening() : stopListening();
+                                print("mic =============== $mic");
+                                mic = !mic;
+                              });
+                            },
+                            focusColor: Colors.black,
+                            highlightColor: Colors.black,
+                            splashColor: Colors.black,
+                          ),
+                          Visibility(
+                            child: IconButton(
+                              icon: Icon(Icons.image,
+                                  color: Colors.white, size: 40),
+                            ),
+                            visible: !(speech.isListening),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
           ),
-
-
         );
       },
     );
   }
-  @override
 
+  @override
   void dispose() {
     super.dispose();
     bubbleController.dispose();
     _backgroundController.dispose();
     flutterTts.stop();
-
   }
-
 
   void startListening() {
     lastWords = "";
     lastError = "";
-    speech.listen(onResult: resultListener );
-    setState(() {
+    speech.listen(onResult: resultListener);
+    setState(() {});
+  }
 
-    });
-  }
   void stopListening() {
-    speech.stop( );
-    setState(() {
-      _speak();
-    });
+    speech.stop();
   }
+
   void cancelListening() {
-    speech.cancel( );
+    speech.cancel();
     setState(() {
-      lastWords="";
+      lastWords = "";
     });
   }
+
   void resultListener(SpeechRecognitionResult result) {
     setState(() {
       lastWords = "${result.recognizedWords}";
     });
   }
-  void errorListener(SpeechRecognitionError error ) {
+
+  void errorListener(SpeechRecognitionError error) {
     setState(() {
       lastError = "${error.errorMsg} - ${error.permanent}";
     });
   }
-  void statusListener(String status ) {
+
+  Future<void> statusListener(String status) async {
     setState(() {
       lastStatus = "$status";
     });
+    print(status);
+    if (lastStatus == "notListening") {
+      data temp = await bot.request(lastWords);
+      setState(() {
+        dbot = temp;
+      });
+      _speak();
+    }
   }
 
   Future _getLanguages() async {
     languages = await flutterTts.getLanguages;
     if (languages != null) setState(() => languages);
   }
+
   Future _getEngines() async {
     var engines = await flutterTts.getEngines;
     if (engines != null) {
@@ -385,26 +433,30 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
       }
     }
   }
+
   Future _speak() async {
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(rate);
     await flutterTts.setPitch(pitch);
 
-    if (lastWords != null) {
-      if (lastWords.isNotEmpty) {
-        var result = await flutterTts.speak(lastWords);
+    if (dbot.answer != null) {
+      if (dbot.answer.isNotEmpty) {
+        var result = await flutterTts.speak(dbot.answer);
         if (result == 1) setState(() => ttsState = TtsState.playing);
       }
     }
   }
+
   Future _stop() async {
     var result = await flutterTts.stop();
     if (result == 1) setState(() => ttsState = TtsState.stopped);
   }
+
   Future _pause() async {
     var result = await flutterTts.pause();
     if (result == 1) setState(() => ttsState = TtsState.paused);
   }
+
   List<DropdownMenuItem<String>> getLanguageDropDownMenuItems() {
     var items = List<DropdownMenuItem<String>>();
     for (dynamic type in languages) {
@@ -413,21 +465,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
     }
     return items;
   }
+
   void changedLanguageDropDownItem(String selectedType) {
     setState(() {
       language = selectedType;
       flutterTts.setLanguage(language);
     });
   }
+
   void _onChange(String text) {
     setState(() {
       _newVoiceText = text;
     });
   }
-
 }
-
-
-
-
-
