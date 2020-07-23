@@ -2,6 +2,7 @@
 import 'dart:math';
 
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -38,9 +39,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
   FlutterTts flutterTts;
   dynamic languages;
   String language;
-  double volume = 2;
+  double volume = 0.6;
   double pitch = 1.3;
-  double rate = 1.0;
+  double rate = 0.8;
 
   String _newVoiceText;
 
@@ -215,6 +216,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
       builder: (context, child){
         return Scaffold(
           backgroundColor: Colors.black,
+          extendBody: false,
           body:  Stack(
             children: <Widget>[
               Container(
@@ -235,44 +237,86 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
 
 
             ]
-                +bubbleWidgets
                 +[Column(
               mainAxisAlignment: MainAxisAlignment.center,
+
               children: <Widget>[
-                Expanded(
-                  child: SizedBox(),
+                SizedBox(
+                  height: 70,
                 ),
-              Center(
-                child: Text(lastWords,style: TextStyle(color: Colors.white,fontSize: 48,fontWeight: FontWeight.w800),),
-              ),
+                Center(
+                  child: Text(lastWords,textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 30,fontWeight: FontWeight.w800),),
+                ),
+                    Container(
+                      height: 250,
+
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 0,
+                        itemBuilder: (BuildContext context, int index) => Card(
+
+                          child: Center(child: Text('Dummy Card Text')),
+                        ),
+                      ),
+                    ),
               Expanded(
                 child: SizedBox(),
               ),
+
+              Center(
+                child: Text(lastWords,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w800,fontStyle: FontStyle.italic),),
+              ),
+                SizedBox(height: 15,),
                 Center(
-                  child:speech.isListening ? Text("I'm listening...",style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w800)) :
-                  Text( 'Not listening' ,style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.w800)),
+                  child:speech.isListening ?
+                      IconButton(
+                        icon: Icon(Icons.cancel,color: Colors.red,size: 40,),
+                        onPressed: (){
+                          cancelListening();
+                        },
+                      ):Container()
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    InkWell(
-                      child: mic && speech.isListening?Image.asset("assets/mic_read.gif",height: 170,width: 170,):
-                      Image.asset("assets/mic_on.gif",height: 170,width: 170,),
-                      onTap: (){
-                        setState(() {
-                          mic=!mic;
-                          mic?startListening():stopListening();
 
-                        });
-                      },
-                      focusColor: Colors.black,
-                      highlightColor: Colors.black,
-                      splashColor: Colors.black,
-                    )
 
-                  ],
-                )
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Visibility(
+                          child:IconButton(
+                            icon: Icon(Icons.camera_alt,color: Colors.white,size: 40),
+                          ),
+                          visible:!(mic && speech.isListening),
+                        ),
+
+                        InkWell(
+                          child: mic && speech.isListening?Image.asset("assets/mic_read.gif",height: 170,width: 170,):
+                          Image.asset("assets/mic_on.gif",height: 170,width: 170,),
+                          onTap: (){
+                            setState(() {
+                              mic=!mic;
+                              mic?startListening():stopListening();
+
+                            });
+                          },
+                          focusColor: Colors.black,
+                          highlightColor: Colors.black,
+                          splashColor: Colors.black,
+                        ),
+                        Visibility(
+                          child:IconButton(
+                            icon: Icon(Icons.image,color: Colors.white,size: 40),
+                          ),
+                          visible: !(mic && speech.isListening),
+                        ),
+
+                      ],
+                    ),
+
               ],
             ),],
           ),
@@ -310,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
   void cancelListening() {
     speech.cancel( );
     setState(() {
-
+      lastWords="";
     });
   }
   void resultListener(SpeechRecognitionResult result) {
