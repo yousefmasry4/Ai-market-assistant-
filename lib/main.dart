@@ -29,7 +29,6 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -411,16 +410,22 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       lastStatus = "$status";
     });
     print(status);
-    if (lastStatus == "notListening") {
-      data temp = await bot.request(lastWords);
-      setState(() {
-        dbot = temp;
-      });
-      _speak();
+    if (lastStatus == "notListening" && !speech.isListening) {
+      Future.delayed(const Duration(seconds: 1), () async {
+        print("=========" + lastWords);
+        data temp = await bot.request(lastWords);
+        setState(() {
+          dbot = temp;
+        });
+        _speak();
+      }
+      );
     }
   }
 
   Future _getLanguages() async {
+    Ip ip=Ip();
+    await ip.get();
     languages = await flutterTts.getLanguages;
     if (languages != null) setState(() => languages);
   }
