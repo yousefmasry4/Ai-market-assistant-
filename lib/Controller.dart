@@ -1,4 +1,21 @@
+import 'package:http/http.dart' as http;
+
+
+
+
 class Controller {
+  String ip="";
+
+  Controller(){
+    get_ip();
+  }
+
+  Future<void> get_ip() async {
+    final data = await http.get(
+        'https://raw.githubusercontent.com/yousefmasry4/cov_scanner/master/ip');
+    ip= await data.body;
+  }
+
   Future<data> request(String) async{
     return data("", "No",[]);
   }
