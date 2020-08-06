@@ -33,7 +33,7 @@ categ = ["A", "b", "c"]
 def get_bot_response():
     userText = request.form.get('msg')
     prev = json.loads(request.form.get('prev'))
-    print(request.form.get('msg'))
+    print(request.form)
     answer1 = str(english_bot.get_response(userText))
     if "ORDER" in str(userText).upper() and prev["with"] == "":
         return '''{
@@ -43,7 +43,7 @@ def get_bot_response():
                             },
                     "msg":"What is your number" ,"list":[], "t_list":"v"
                     }'''
-    elif prev["with"] == "get_id" and prev["id"] == "-1":
+    elif prev["with"] == "get_id" and prev["id"] == "":
         for i in str(userText).split():
             if i[:3] == "015" or i[:3] == "010" or i[:3] == "011":
                 # TODO:  nshof el rakm dah mawgod walla la w n return in the next var : NONE LW MFESH
@@ -52,7 +52,7 @@ def get_bot_response():
                     # TODO: n3ml save lel id ka new user mn 8er esm kda kda 7ns2lo 3lyh
                     return '''{
                         "prev":{
-                            "id":%s,
+                            "id":"%s",
                             "with":"get_name_into_id"
                         },
                         "msg":"what is Your name" ,"list":[], "t_list":"v"
@@ -60,12 +60,12 @@ def get_bot_response():
                 else:
                     return '''{
                         "prev":{
-                            "id":%s,
+                            "id":"%s",
                             "with":"ready"
                         },
                         "msg":"what is Your order , %s" ,"list":[], "t_list":"v"
                     }''' % (i, data["name"].split(" ")[0])
-    elif prev["with"] == "get_name_into_id" and prev["id"] != "-1":
+    elif prev["with"] == "get_name_into_id" and prev["id"] != "":
         id = prev["id"]
         print(str(userText))
         name = (str(userText).upper()).replace("MY NAME IS", "")
@@ -75,12 +75,12 @@ def get_bot_response():
         # TODO: save name into id
         return '''{
             "prev":{
-                "id":%s,
+                "id":"%s",
                 "with":"get_address"
             },
             "msg":"what is Your address , %s" ,"list":[], "t_list":"v"
         }''' % (id, name.split(" ")[0])
-    elif prev["with"] == "get_address" and prev["id"] != "-1":
+    elif prev["with"] == "get_address" and prev["id"] != "":
         id = prev["id"]
         address = (str(userText).upper()).replace("MY ADDRESS IS", "")
         # TODO: save address into id
@@ -88,7 +88,7 @@ def get_bot_response():
         user_name = "Yousseff"
         return '''{
                         "prev":{
-                            "id":%s,
+                            "id":"%s",
                             "with":"ready"
                         },
                         "msg":"what is Your order , %s" ,"list":[], "t_list":"v"
@@ -99,7 +99,7 @@ def get_bot_response():
         if "CANCEL" in str(userText).upper().split():
             return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"ready"
                                 },
                                 "msg":"ok no problem"
@@ -111,7 +111,7 @@ def get_bot_response():
         if number is None:
             return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"not_number"
                                 },
                                 "msg":"give me number or say cancel"
@@ -120,7 +120,7 @@ def get_bot_response():
         elif int(number) > x:
             return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"not_number"
                                 },
                                 "msg":"i have only %s,So give me another number or say cancel" ,"list":[], "t_list":"v"
@@ -129,32 +129,32 @@ def get_bot_response():
             # TODO: deflo p*number fel list bta3to w shel el bda3a ely 5dha
             return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"ready"
                                 },
                                 "msg":"ok, I added it successfully" ,"list":[], "t_list":"v"
                             }''' % id
-    elif prev["with"] == "ready_to_add" and prev["id"] != "-1":
+    elif prev["with"] == "ready_to_add" and prev["id"] != "":
         # TODO : add x to list
         x = prev["cash"]
         id = prev["id"]
         if "NO" in str(userText).upper():
             return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"ready"
                                 },
                                 "msg":"ok" ,"list":[], "t_list":"v"
                             }''' % id
         return '''{
                  "prev":{
-                       "id":%s,
+                       "id":"%s",
                        "with":"number",
                        "cash":%s
                         },
                  "msg":"Ok, how many %s do you need" ,"list":[], "t_list":"v"
                 }''' % (id, x, x)
-    elif prev["with"] == "ready" and prev["id"] != "-1":
+    elif prev["with"] == "ready" and prev["id"] != "":
         id = prev["id"]
         # TODO : get user name
         user_name = "Yousseff"
@@ -169,7 +169,7 @@ def get_bot_response():
                 itesms = ["a1", "a2", "a3"]
                 return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"ready"
                                 },
                                 "msg":"%s select item from %s please",
@@ -184,7 +184,7 @@ def get_bot_response():
                     # TODO : add x to list
                     return '''{
                              "prev":{
-                                   "id":%s,
+                                   "id":"%s",
                                    "with":"number",
                                    "cash":%s
                                     },
@@ -193,7 +193,7 @@ def get_bot_response():
                 else:
                     return '''{
                         "prev":{
-                            "id":%s,
+                            "id":"%s",
                             "with":"ready"
                         },
                         "msg":"sorry %s , We don't have it" ,"list":[], "t_list":"v"
@@ -208,7 +208,7 @@ def get_bot_response():
                 # TODO : remove x from list
                 return '''{
                          "prev":{
-                               "id":%s,
+                               "id":"%s",
                                "with":"ready"
                                 },
                          "msg":"Ok" ,"list":[], "t_list":"v"
@@ -216,7 +216,7 @@ def get_bot_response():
             else:
                 return '''{
                     "prev":{
-                        "id":%s,
+                        "id":"%s",
                         "with":"ready"
                     },
                     "msg":"sorry %s , You don't select it" ,"list":[], "t_list":"v"
@@ -232,7 +232,7 @@ def get_bot_response():
                 itesms = ["a1", "a2", "a3"]
                 return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"ready"
                                 },
                                 "msg":"%s select item from %s please",
@@ -248,7 +248,7 @@ def get_bot_response():
                 price = 500
                 return '''{
                          "prev":{
-                               "id":%s,
+                               "id":"%s",
                                "with":"ready_to_add",
                                "cash":%s
                                 },
@@ -257,7 +257,7 @@ def get_bot_response():
             else:
                 return '''{
                     "prev":{
-                        "id":%s,
+                        "id":"%s",
                         "with":"ready"
                     },
                     "msg":"sorry %s ,We don't have it" ,"list":[], "t_list":"v"
@@ -267,7 +267,7 @@ def get_bot_response():
             l = []
             return '''{
                             "prev":{
-                                "id":%s,
+                                "id":"%s",
                                 "with":"ready"
                             },
                             "msg":"Ok %s,If you wanna finish say finish to me ",
@@ -285,7 +285,7 @@ def get_bot_response():
                 location=""
                 return '''{
                                 "prev":{
-                                    "id":%s,
+                                    "id":"%s",
                                     "with":"ready"
                                 },
                                 "msg":"you can find it in %s" ,"list":[], "t_list":"v"
@@ -300,7 +300,7 @@ def get_bot_response():
                     location = ""
                     return '''{
                                     "prev":{
-                                        "id":%s,
+                                        "id":"%s",
                                         "with":"ready"
                                     },
                                     "msg":"you can find it in %s" ,"list":[], "t_list":"v"
@@ -308,7 +308,7 @@ def get_bot_response():
                 else:
                     return '''{
                         "prev":{
-                            "id":%s,
+                            "id":"%s",
                             "with":"ready"
                         },
                         "msg":"sorry %s , We don't have it"
@@ -320,16 +320,16 @@ def get_bot_response():
             # TODO get courier name and number
             courier = ""
             number = ""
-            return '''{ "prev":{ "id":%s, "with":"ready" }, "msg":"I Am happy to speak to you %s,your courier will be 
+            return '''{ "prev":{ "id":"%s", "with":"ready" }, "msg":"I Am happy to speak to you %s,your courier will be 
             %s and his number is %s and he'll reach you in 45", "list":%s, "t_list":"v" }''' % (id, user_name.split(" ")[0], courier, number, json.dumps(l))
 
     return '''{
-                        "prev":{
-                            "id":"",
-                            "with":""
-                        },
-                        "msg":"%s" ,"list":[], "t_list":"v"
-                    }''' % (answer1)
+                    "prev":{
+                        "id":"%s",
+                        "with":"%s"
+                    },
+                    "msg":"%s" ,"list":[], "t_list":"v"
+                }''' % (prev["id"],prev["with"],answer1)
 
 
 if __name__ == "__main__":
