@@ -41,7 +41,7 @@ def get_bot_response():
                             "id":"",
                             "with":"get_id"
                             },
-                    "msg":"What is your number"
+                    "msg":"What is your number" ,"list":"[]", "t_list":"v"
                     }'''
     elif prev["with"] == "get_id" and prev["id"] == "-1":
         for i in str(userText).split():
@@ -55,7 +55,7 @@ def get_bot_response():
                             "id":%s,
                             "with":"get_name_into_id"
                         },
-                        "msg":"what is Your name"
+                        "msg":"what is Your name" ,"list":"[]", "t_list":"v"
                     }''' % (i)
                 else:
                     return '''{
@@ -63,7 +63,7 @@ def get_bot_response():
                             "id":%s,
                             "with":"ready"
                         },
-                        "msg":"what is Your order , %s"
+                        "msg":"what is Your order , %s" ,"list":"[]", "t_list":"v"
                     }''' % (i, data["name"].split(" ")[0])
     elif prev["with"] == "get_name_into_id" and prev["id"] != "-1":
         id = prev["id"]
@@ -78,7 +78,7 @@ def get_bot_response():
                 "id":%s,
                 "with":"get_address"
             },
-            "msg":"what is Your address , %s"
+            "msg":"what is Your address , %s" ,"list":"[]", "t_list":"v"
         }''' % (id, name.split(" ")[0])
     elif prev["with"] == "get_address" and prev["id"] != "-1":
         id = prev["id"]
@@ -91,7 +91,7 @@ def get_bot_response():
                             "id":%s,
                             "with":"ready"
                         },
-                        "msg":"what is Your order , %s"
+                        "msg":"what is Your order , %s" ,"list":"[]", "t_list":"v"
                     }''' % (id, user_name.split(" ")[0])
     elif prev["with"] == "number" or prev["with"] == "not_number":
         p = prev["cash"]
@@ -103,7 +103,7 @@ def get_bot_response():
                                     "with":"ready"
                                 },
                                 "msg":"ok no problem"
-
+ ,"list":"[]", "t_list":"v"
                             }''' % id
         # TODO: get number of items of it
         x = 6
@@ -115,7 +115,7 @@ def get_bot_response():
                                     "with":"not_number"
                                 },
                                 "msg":"give me number or say cancel"
-
+ ,"list":"[]", "t_list":"v"
                             }''' % id
         elif int(number) > x:
             return '''{
@@ -123,7 +123,7 @@ def get_bot_response():
                                     "id":%s,
                                     "with":"not_number"
                                 },
-                                "msg":"i have only %s,So give me another number or say cancel"
+                                "msg":"i have only %s,So give me another number or say cancel" ,"list":"[]", "t_list":"v"
                             }''' % (id, str(x))
         else:
             # TODO: deflo p*number fel list bta3to w shel el bda3a ely 5dha
@@ -132,7 +132,7 @@ def get_bot_response():
                                     "id":%s,
                                     "with":"ready"
                                 },
-                                "msg":"ok, I added it successfully"
+                                "msg":"ok, I added it successfully" ,"list":"[]", "t_list":"v"
                             }''' % id
     elif prev["with"] == "ready_to_add" and prev["id"] != "-1":
         # TODO : add x to list
@@ -144,7 +144,7 @@ def get_bot_response():
                                     "id":%s,
                                     "with":"ready"
                                 },
-                                "msg":"ok"
+                                "msg":"ok" ,"list":"[]", "t_list":"v"
                             }''' % id
         return '''{
                  "prev":{
@@ -152,7 +152,7 @@ def get_bot_response():
                        "with":"number",
                        "cash":%s
                         },
-                 "msg":"Ok, how many %s do you need"
+                 "msg":"Ok, how many %s do you need" ,"list":"[]", "t_list":"v"
                 }''' % (id, x, x)
     elif prev["with"] == "ready" and prev["id"] != "-1":
         id = prev["id"]
@@ -188,7 +188,7 @@ def get_bot_response():
                                    "with":"number",
                                    "cash":%s
                                     },
-                             "msg":"Ok %s , how many %s do you need"
+                             "msg":"Ok %s , how many %s do you need" ,"list":"[]", "t_list":"v"
                             }''' % (id, x, user_name.split(" ")[0], x[0])
                 else:
                     return '''{
@@ -196,7 +196,7 @@ def get_bot_response():
                             "id":%s,
                             "with":"ready"
                         },
-                        "msg":"sorry %s , We don't have it"
+                        "msg":"sorry %s , We don't have it" ,"list":"[]", "t_list":"v"
                     }''' % (id, user_name.split(" ")[0])
         elif "REMOVE" in str(userText).upper() or "DELETE" in str(userText).upper():
             x = None
@@ -211,7 +211,7 @@ def get_bot_response():
                                "id":%s,
                                "with":"ready"
                                 },
-                         "msg":"Ok"
+                         "msg":"Ok" ,"list":"[]", "t_list":"v"
                         }''' % id
             else:
                 return '''{
@@ -219,7 +219,7 @@ def get_bot_response():
                         "id":%s,
                         "with":"ready"
                     },
-                    "msg":"sorry %s , You don't select it"
+                    "msg":"sorry %s , You don't select it" ,"list":"[]", "t_list":"v"
                 }''' % (id, user_name.split(" ")[0])
         elif "PRICE" in str(userText).upper() or "HOW MUCH" in str(userText).upper():
             x = None
@@ -252,7 +252,7 @@ def get_bot_response():
                                "with":"ready_to_add",
                                "cash":%s
                                 },
-                         "msg":"%s $,Do you wanna add it"
+                         "msg":"%s $,Do you wanna add it" ,"list":"[]", "t_list":"v"
                         }''' % (id, x, price)
             else:
                 return '''{
@@ -260,7 +260,7 @@ def get_bot_response():
                         "id":%s,
                         "with":"ready"
                     },
-                    "msg":"sorry %s ,We don't have it"
+                    "msg":"sorry %s ,We don't have it" ,"list":"[]", "t_list":"v"
                 }''' % (id, user_name.split(" ")[0])
         elif "LIST" in str(userText).upper():
             # TODO:get ist of id
@@ -288,7 +288,7 @@ def get_bot_response():
                                     "id":%s,
                                     "with":"ready"
                                 },
-                                "msg":"you can find it in %s"
+                                "msg":"you can find it in %s" ,"list":"[]", "t_list":"v"
                             }''' % (id, location)
             else:
                 for i in prod:
@@ -303,7 +303,7 @@ def get_bot_response():
                                         "id":%s,
                                         "with":"ready"
                                     },
-                                    "msg":"you can find it in %s"
+                                    "msg":"you can find it in %s" ,"list":"[]", "t_list":"v"
                                 }''' % (id, location)
                 else:
                     return '''{
@@ -312,6 +312,7 @@ def get_bot_response():
                             "with":"ready"
                         },
                         "msg":"sorry %s , We don't have it"
+                        ,"list":"[]", "t_list":"v"
                     }''' % (id, user_name.split(" ")[0])
         elif "FINISH" in str(userText).upper():
             # TODO: get ist of id
