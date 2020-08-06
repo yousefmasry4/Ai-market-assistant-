@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class Controller {
   static String ip="";
-
+  var prev=null;
   static Future<void> get_ip() async {
     var data = await http.get(
         'https://raw.githubusercontent.com/yousefmasry4/Ai-market-assistant-/master/ip');
@@ -20,29 +20,29 @@ class Controller {
     print(msg);
     print("ip is "+"${Controller.ip.split("%")[0]}/get");
     var req = await http.post(
-      "https://c58c7879f366.ngrok.io/get",
+      "https://383ab3c0d009.ngrok.io/get",
       body:{
         'msg': msg,
+        "prev":prev == null?'{"id":"","with":""}':jsonEncode(prev)
       }
     );
     print(req.body);
     print(req.statusCode);
-
-    return data("", req.body, []);
+    Map<String, dynamic> body =await jsonDecode(req.body);
+    prev =await body["prev"];
+    print(body);
+    return data(prev, body["msg"], body["list"],body["t_list"]);
   }
 }
 
-class Item {
-  final String id, name, price, img;
-  Item(this.id, this.img, this.name, this.price);
-}
 
 class data {
-  final String ref;
-  final String answer;
-  final List<Item> items;
+  final Map<String, dynamic>  ref;
+  String answer="";
+  final List items;
+  final String t_list;
 
-  data(this.ref, this.answer, this.items);
+  data(this.ref, this.answer, this.items, this.t_list);
 }
 class Ip{
   get() async{

@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   double volume = 0.6;
   double pitch = 1.3;
   double rate = 0.8;
-  data dbot = data("", "", []);
+  data dbot=new data(null,"",[],"") ;
   String _newVoiceText;
 
   TtsState ttsState = TtsState.stopped;
@@ -323,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               icon: Icon(Icons.camera_alt,
                                   color: Colors.white, size: 40),
                             ),
-                            visible: !(speech.isListening),
+                            visible: false,
                           ),
                           InkWell(
                             child: speech.isListening
@@ -354,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               icon: Icon(Icons.image,
                                   color: Colors.white, size: 40),
                             ),
-                            visible: !(speech.isListening),
+                            visible: false,
                           ),
                         ],
                       ),
@@ -447,6 +447,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     if (dbot.answer != null) {
       if (dbot.answer.isNotEmpty) {
         var result = await flutterTts.speak(dbot.answer);
+
         if (result == 1) setState(() => ttsState = TtsState.playing);
       }
     }
