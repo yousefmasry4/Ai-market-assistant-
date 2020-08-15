@@ -4,10 +4,10 @@ from chatterbot.trainers import ChatterBotCorpusTrainer
 import en_core_web_sm
 import json
 from sqlalchemy.ext.indexable import index_property
-
+from db_helper import db
 nlp = en_core_web_sm.load()
 app = Flask(__name__)
-
+data=db()
 english_bot = ChatBot("s", storage_adapter='chatterbot.storage.SQLStorageAdapter',
                       logic_adapters=[
                           {
@@ -23,10 +23,10 @@ trainer.train(
 )
 
 # TODO: LOAD ALL PRODUCTS NAME
-prod = ["AA", "bb", "cc"]
+prod  = db.readitems()
 
 # TODO: LOAD ALL categ NAME
-categ = ["A", "b", "c"]
+categ = db.readcateg()
 
 
 @app.route("/get", methods=['POST'])
@@ -47,9 +47,11 @@ def get_bot_response():
         for i in str(userText).split():
             if i[:3] == "015" or i[:3] == "010" or i[:3] == "011":
                 # TODO:  nshof el rakm dah mawgod walla la w n return in the next var : NONE LW MFESH
-                data = None
-                if (None == data):
+                data = db.checkid(getid=db.getid(),z=i)
+
+                if ([] == data):
                     # TODO: n3ml save lel id ka new user mn 8er esm kda kda 7ns2lo 3lyh
+                    db.adduserid(i)
                     return '''{
                         "prev":{
                             "id":"%s",
@@ -73,6 +75,7 @@ def get_bot_response():
             name = name[1:]
         print(name)
         # TODO: save name into id
+        db.addusername(id,name)
         return '''{
             "prev":{
                 "id":"%s",
@@ -84,8 +87,9 @@ def get_bot_response():
         id = prev["id"]
         address = (str(userText).upper()).replace("MY ADDRESS IS", "")
         # TODO: save address into id
+
         # TODO : get user name
-        user_name = "Yousseff"
+        user_name = db.getusername(id)[0]
         return '''{
                         "prev":{
                             "id":"%s",
