@@ -132,7 +132,9 @@ def get_bot_response():
                             }''' % (id, str(x))
         else:
             # TODO: deflo p*number fel list bta3to w shel el bda3a ely 5dha
-            db.addtolist(x)
+            while number>0 :
+              db.addtolist(x)
+              number= number-1
             return '''{
                                 "prev":{
                                     "id":"%s",
