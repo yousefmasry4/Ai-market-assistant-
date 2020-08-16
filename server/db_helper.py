@@ -49,7 +49,13 @@ class db:
     def removefromlist(self, p):  # remove items from collects
         cursor = self.conn.cursor()
         cursor.execute('delete from collects  where collects.product_name = ?', (p))
-
+	def getremainingitems(conn,i):
+		cursor=conn.cursor()
+		cursor.execute('select quantity from items where product_name = ? ',(i))
+		return [quantity[0] for quantity in cursor]
+	def addaddress(conn,a,i):
+		cursor=conn.cursor()
+		cursor.execute('update customer set address=? where contact_number =? ',(a,i))
     def getprice(self, p):
         cursor = self.conn.cursor()
         cursor.execute("select price from items where product_name =? ", (p))
