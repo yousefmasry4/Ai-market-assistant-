@@ -47,7 +47,7 @@ def get_bot_response():
         for i in str(userText).split():
             if i[:3] == "015" or i[:3] == "010" or i[:3] == "011":
                 # TODO:  nshof el rakm dah mawgod walla la w n return in the next var : NONE LW MFESH
-                data = db.checkid(getid=db.getid(),z=i)
+                data = db.checkid(db.getid(),i)
 
                 if ([] == data):
                     # TODO: n3ml save lel id ka new user mn 8er esm kda kda 7ns2lo 3lyh
@@ -110,8 +110,7 @@ def get_bot_response():
  ,"list":[], "t_list":"v"
                             }''' % id
         # TODO: get number of items of it
-        db.getquantity(x)
-        x = 6
+        x = db.getquantity(x)
         number = [int(i) for i in userText.split() if i.isdigit()][0]
         if number is None:
             return '''{
@@ -166,8 +165,7 @@ def get_bot_response():
     elif prev["with"] == "ready" and prev["id"] != "":
         id = prev["id"]
         # TODO : get user name
-        db.getusername(id)
-        user_name = "Yousseff"
+        user_name = db.getusername(id)
         if "NEED" in str(userText).upper() or "ADD" in str(userText).upper():
             x = None
             for i in categ:
@@ -242,8 +240,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO return all items of category
-                db.getallitemsincat(categ)
-                itesms = ["a1", "a2", "a3"]
+                itesms = db.getallitemsincat(categ)
                 return '''{
                                 "prev":{
                                     "id":"%s",
@@ -259,8 +256,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO : GET PRICE OF X
-                db.getprice(x)
-                price = 500
+                price = db.getprice(x)
                 return '''{
                          "prev":{
                                "id":"%s",
@@ -279,8 +275,7 @@ def get_bot_response():
                 }''' % (id, user_name.split(" ")[0])
         elif "LIST" in str(userText).upper():
             # TODO:get ist of id
-            db.getlistid()
-            l = []
+            l = db.getlistid()
             return '''{
                             "prev":{
                                 "id":"%s",
@@ -298,8 +293,8 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO return location of category
-                db.getlocationofitem(x)
-                location=""
+                
+                location=db.getlocationofitem(x)
                 return '''{
                                 "prev":{
                                     "id":"%s",
@@ -314,8 +309,8 @@ def get_bot_response():
                         break
                 if x is not None:
                     #TODO :get location of item x
-                    db.getlocationofitem(x)
-                    location = ""
+                    
+                    location = db.getlocationofitem(x)
                     return '''{
                                     "prev":{
                                         "id":"%s",
