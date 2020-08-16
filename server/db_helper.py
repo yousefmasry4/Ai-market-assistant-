@@ -79,20 +79,21 @@ class db:
         return [category_name[0] for category_name in cursor]
     
     def getcouriernumber(self,n):
-		cursor=self.conn.cursor()
-		cursor.execute('select phone_number from delivery_phone_number where delivery_id = (select delivery_id from delivery where delivery.first_name= ?)',(n))
+	cursor=self.conn.cursor()
+	cursor.execute('select phone_number from delivery_phone_number where delivery_id = (select delivery_id from delivery where delivery.first_name= ?)',(n))
     def getremainingitems(self,i):
-		cursor=self.conn.cursor()
-		cursor.execute('select quantity from items where product_name = ? ',(i))
-		return [quantity[0] for quantity in cursor]
+	cursor=self.conn.cursor()
+	cursor.execute('select quantity from items where product_name = ? ',(i))
+	return [quantity[0] for quantity in cursor]
     
-	def addaddress(self,a,i):
-		cursor=self.conn.cursor()
-		cursor.execute('update customer set address=? where contact_number =? ',(a,i))
+    def addaddress(self,a,i):
+	cursor=self.conn.cursor()
+	cursor.execute('update customer set address=? where contact_number =? ',(a,i))
         
-	def getquantity(self,x):
-		cursor=self.conn.cursor()
-		cursor.execute('select quantity from items where product_name= ?',(x))
+    def getquantity(self,x):
+	cursor=self.conn.cursor()
+	cursor.execute('select quantity from items where product_name= ?',(x))
+	return [quantity [0] for quantity in cursor]
         
     def getcourier(self):
         cursor = self.conn.cursor()
