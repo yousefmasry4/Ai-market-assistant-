@@ -87,7 +87,7 @@ def get_bot_response():
         id = prev["id"]
         address = (str(userText).upper()).replace("MY ADDRESS IS", "")
         # TODO: save address into id
-
+        db.addaddress(address,id)
         # TODO : get user name
         user_name = db.getusername(id)[0]
         return '''{
@@ -110,6 +110,7 @@ def get_bot_response():
  ,"list":[], "t_list":"v"
                             }''' % id
         # TODO: get number of items of it
+        db.getquantity(x)
         x = 6
         number = [int(i) for i in userText.split() if i.isdigit()][0]
         if number is None:
@@ -131,6 +132,7 @@ def get_bot_response():
                             }''' % (id, str(x))
         else:
             # TODO: deflo p*number fel list bta3to w shel el bda3a ely 5dha
+            db.addtolist(x)
             return '''{
                                 "prev":{
                                     "id":"%s",
@@ -140,6 +142,7 @@ def get_bot_response():
                             }''' % id
     elif prev["with"] == "ready_to_add" and prev["id"] != "":
         # TODO : add x to list
+        db.addtolist(x)
         x = prev["cash"]
         id = prev["id"]
         if "NO" in str(userText).upper():
@@ -161,6 +164,7 @@ def get_bot_response():
     elif prev["with"] == "ready" and prev["id"] != "":
         id = prev["id"]
         # TODO : get user name
+        db.getusername(id)
         user_name = "Yousseff"
         if "NEED" in str(userText).upper() or "ADD" in str(userText).upper():
             x = None
@@ -170,6 +174,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO return all items of category
+                db.getallitemsincat(categ)
                 itesms = ["a1", "a2", "a3"]
                 return '''{
                                 "prev":{
@@ -186,6 +191,7 @@ def get_bot_response():
                         break
                 if x is not None:
                     # TODO : add x to list
+                    db.addtolist(x)
                     return '''{
                              "prev":{
                                    "id":"%s",
@@ -210,6 +216,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO : remove x from list
+                db.removefromlist(x)
                 return '''{
                          "prev":{
                                "id":"%s",
@@ -233,6 +240,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO return all items of category
+                db.getallitemsincat(categ)
                 itesms = ["a1", "a2", "a3"]
                 return '''{
                                 "prev":{
@@ -249,6 +257,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO : GET PRICE OF X
+                db.getprice(x)
                 price = 500
                 return '''{
                          "prev":{
@@ -268,6 +277,7 @@ def get_bot_response():
                 }''' % (id, user_name.split(" ")[0])
         elif "LIST" in str(userText).upper():
             # TODO:get ist of id
+            db.getlistid()
             l = []
             return '''{
                             "prev":{
@@ -286,6 +296,7 @@ def get_bot_response():
                     break
             if x is not None:
                 # TODO return location of category
+                db.getlocationofitem(x)
                 location=""
                 return '''{
                                 "prev":{
@@ -301,6 +312,7 @@ def get_bot_response():
                         break
                 if x is not None:
                     #TODO :get location of item x
+                    db.getlocationofitem(x)
                     location = ""
                     return '''{
                                     "prev":{
@@ -322,8 +334,8 @@ def get_bot_response():
             # TODO: get ist of id
             l = []
             # TODO get courier name and number
-            courier = ""
-            number = ""
+            courier = db.getcourier()
+            number =db.getcouriernumber(courier)
             return '''{ "prev":{ "id":"%s", "with":"ready" }, "msg":"I Am happy to speak to you %s,your courier will be 
             %s and his number is %s and he'll reach you in 45", "list":%s, "t_list":"v" }''' % (id, user_name.split(" ")[0], courier, number, json.dumps(l))
 
