@@ -87,7 +87,7 @@ def get_bot_response():
         id = prev["id"]
         address = (str(userText).upper()).replace("MY ADDRESS IS", "")
         # TODO: save address into id
-
+        db.addaddress(address,id)
         # TODO : get user name
         user_name = db.getusername(id)[0]
         return '''{
