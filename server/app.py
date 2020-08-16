@@ -332,7 +332,7 @@ def get_bot_response():
                     }''' % (id, user_name.split(" ")[0])
         elif "FINISH" in str(userText).upper():
             # TODO: get ist of id
-            l = []
+            l = db.getlistid():
             # TODO get courier name and number
             courier = db.getcourier()
             number =db.getcouriernumber(courier)
