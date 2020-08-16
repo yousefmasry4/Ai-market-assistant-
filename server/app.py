@@ -45,11 +45,11 @@ def get_bot_response():
                     }'''
     elif prev["with"] == "get_id" and prev["id"] == "":
         for i in str(userText).split():
-            if i[:3] == "015" or i[:3] == "010" or i[:3] == "011":
+            if i[:3] == "15" or i[:3] == "10" or i[:3] == "11" or i[:3] == "12":
                 # TODO:  nshof el rakm dah mawgod walla la w n return in the next var : NONE LW MFESH
                 data = db.checkid(db.getid(),i)
 
-                if ([] == data):
+                if (data is None):
                     # TODO: n3ml save lel id ka new user mn 8er esm kda kda 7ns2lo 3lyh
                     db.adduserid(i)
                     return '''{
@@ -66,7 +66,7 @@ def get_bot_response():
                             "with":"ready"
                         },
                         "msg":"what is Your order , %s" ,"list":[], "t_list":"v"
-                    }''' % (i, data["name"].split(" ")[0])
+                    }''' % (i, data.split(" ")[0])
     elif prev["with"] == "get_name_into_id" and prev["id"] != "":
         id = prev["id"]
         print(str(userText))
