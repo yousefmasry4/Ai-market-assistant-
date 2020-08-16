@@ -20,7 +20,10 @@ class db:
 
     def checkid(self,getid, z):  # z is the user contact number which is also the primary key
         found = [i for i in getid if z in i]
-        return found  # empty if not found , NULL  i mean
+	if found == empty :
+		return NONE
+	else :
+		return found
 
     def adduserid(self, z):
         cursor = self.conn.cursor()
