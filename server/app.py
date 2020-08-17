@@ -112,6 +112,7 @@ def get_bot_response():
         # TODO: get number of items of it
         x = db.getremainingitems(p)
         number = [int(i) for i in userText.split() if i.isdigit()]
+        print(number)
         if number[0] is None:
             return '''{
                                 "prev":{
@@ -133,9 +134,9 @@ def get_bot_response():
                             }''' % (id,p, str(x))
         else:
             # TODO: deflo p*number fel list bta3to w shel el bda3a ely 5dha
-            while number > 0:
+            while number[0] > 0:
                 db.addtolist(prev["id"], p)
-                number = number - 1
+                number[0] = number[0] - 1
             return '''{
                                 "prev":{
                                     "id":"%s",
@@ -306,7 +307,7 @@ def get_bot_response():
                             }''' % (id, location)
             else:
                 for i in prod:
-                    if i in str(userText).upper().split(" "):
+                    if i.upper() in str(userText).upper().split(" "):
                         x = i
                         break
                 if x is not None:
@@ -328,7 +329,7 @@ def get_bot_response():
                         },
                         "msg":"sorry %s , We don't have it"
                         ,"list":[], "t_list":"v"
-                    }''' % (id, user_name.split(" ")[0])
+                    }''' % (id, user_name)
         elif "FINISH" in str(userText).upper():
             # TODO: get ist of id
             l = db.getlistid(prev["id"])
