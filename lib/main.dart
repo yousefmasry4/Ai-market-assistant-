@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   double volume = 0.6;
   double pitch = 1.3;
   double rate = 0.8;
-  data dbot=new data(null,"",[],"") ;
+  data dbot = new data(null, "", [], "");
   String _newVoiceText;
 
   TtsState ttsState = TtsState.stopped;
@@ -274,14 +274,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         ),
                       ),
                       SizedBox(
-                        height: 250,
+                        height: 150,
+
                         child: ListView.builder(
                           shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 0,
+                          scrollDirection:dbot.t_list=="v"?Axis.vertical:Axis.horizontal,
+                          itemCount: dbot.items.length,
                           itemBuilder: (BuildContext context, int index) =>
                               Card(
-                            child: Center(child: Text('Dummy Card Text')),
+                            child: Center(child: Text(dbot.items[index],textAlign: TextAlign.center,)),
                           ),
                         ),
                       ),
@@ -418,13 +419,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           dbot = temp;
         });
         _speak();
-      }
-      );
+      });
     }
   }
 
   Future _getLanguages() async {
-    Ip ip=Ip();
+    Ip ip = Ip();
     await ip.get();
     languages = await flutterTts.getLanguages;
     if (languages != null) setState(() => languages);

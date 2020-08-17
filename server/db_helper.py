@@ -48,8 +48,7 @@ class db:
         cursor.execute("select customer_name from customer where customer_id = %s " % z)
         return [customer_name[0] for customer_name in cursor]
 
-    def getallitemsincat(self, c):  # y  # c is the category name ps.use drinks for testing
-        c = str(c).upper()
+    def getallitemsincat(self, cc):  # y  # c is the category name ps.use drinks for testing
         cursor = self.conn.cursor()
         cursor.execute(
             '''
@@ -59,8 +58,7 @@ class db:
                 SELECT category_id  FROM category 
                 WHERE name ='%s'
              )
-              '''
-            % c)
+              '''%str(cc).upper())
         return [str(product_name[0]).replace(" ", "") for product_name in cursor]
 
     def addtolist(self, my_id, p):  # y  # adds items into collects
@@ -126,4 +124,3 @@ class db:
         return [i[0] for i in cursor][0]
 
 
-db = db()

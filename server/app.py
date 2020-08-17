@@ -3,17 +3,17 @@ from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
 import en_core_web_sm
 import json
-from db_helper import db
+import db_helper
 
 nlp = en_core_web_sm.load()
 app = Flask(__name__)
-data = db()
+db = db_helper.db()
 english_bot = ChatBot("s", storage_adapter='chatterbot.storage.SQLStorageAdapter',
                       logic_adapters=[
                           {
                               'import_path': 'chatterbot.logic.BestMatch',
                               'default_response': 'I am sorry, but I do not understand.',
-                              'maximum_similarity_threshold': 0.30
+                              'maximum_similarity_threshold': 0.10
                           }
                       ],
                       )
@@ -110,25 +110,27 @@ def get_bot_response():
                                 ,"list":[], "t_list":"v"
                             }''' % id
         # TODO: get number of items of it
-        x = db.getquantity(p)
-        number = [int(i) for i in userText.split() if i.isdigit()][0]
-        if number is None:
+        x = db.getremainingitems(p)
+        number = [int(i) for i in userText.split() if i.isdigit()]
+        if number[0] is None:
             return '''{
                                 "prev":{
                                     "id":"%s",
-                                    "with":"not_number"
+                                    "with":"not_number",
+                                    "cash":"%s"
                                 },
                                 "msg":"give me number or say cancel"
  ,"list":[], "t_list":"v"
-                            }''' % id
-        elif int(number) > x:
+                            }''' % (id,p)
+        elif int(number[0]) > x:
             return '''{
                                 "prev":{
                                     "id":"%s",
-                                    "with":"not_number"
+                                    "with":"not_number",
+                                    "cash":"%s"
                                 },
                                 "msg":"i have only %s,So give me another number or say cancel" ,"list":[], "t_list":"v"
-                            }''' % (id, str(x))
+                            }''' % (id,p, str(x))
         else:
             # TODO: deflo p*number fel list bta3to w shel el bda3a ely 5dha
             while number > 0:
@@ -158,7 +160,7 @@ def get_bot_response():
                  "prev":{
                        "id":"%s",
                        "with":"number",
-                       "cash":%s
+                       "cash":"%s"
                         },
                  "msg":"Ok, how many %s do you need" ,"list":[], "t_list":"v"
                 }''' % (id, x, x)
@@ -169,12 +171,13 @@ def get_bot_response():
         if "NEED" in str(userText).upper() or "ADD" in str(userText).upper():
             x = None
             for i in categ:
-                if i in str(userText).upper().split(" "):
+                if str(i).upper() in str(userText).upper().split(" "):
                     x = i
                     break
+            print("x is ",x)
             if x is not None:
                 # TODO return all items of category
-                itesms = db.getallitemsincat(categ)
+                itesms = db.getallitemsincat(str(x).replace(" ",""))
                 return '''{
                                 "prev":{
                                     "id":"%s",
@@ -182,10 +185,10 @@ def get_bot_response():
                                 },
                                 "msg":"%s select item from %s please",
                                 "list":%s
-                            }''' % (id, user_name.split(" ")[0], x, json.dumps(itesms))
+                            }''' % (id, user_name, x, json.dumps(itesms))
             else:
                 for i in prod:
-                    if i in str(userText).upper().split(" "):
+                    if i.upper() in str(userText).upper().split(" "):
                         x = i
                         break
                 if x is not None:
@@ -195,7 +198,7 @@ def get_bot_response():
                              "prev":{
                                    "id":"%s",
                                    "with":"number",
-                                   "cash":%s
+                                   "cash":"%s"
                                     },
                              "msg":"Ok %s , how many %s do you need" ,"list":[], "t_list":"v"
                             }''' % (id, x, user_name.split(" ")[0], x[0])
@@ -205,8 +208,8 @@ def get_bot_response():
                             "id":"%s",
                             "with":"ready"
                         },
-                        "msg":"sorry %s , We don't have it" ,"list":[], "t_list":"v"
-                    }''' % (id, user_name.split(" ")[0])
+                        "msg":"sorry , We don't have it" ,"list":[], "t_list":"v"
+                    }''' % (id)
         elif "REMOVE" in str(userText).upper() or "DELETE" in str(userText).upper():
             x = None
             for i in prod:
@@ -250,7 +253,7 @@ def get_bot_response():
                                 "t_list":"h"
                             }''' % (id, user_name.split(" ")[0], x, json.dumps(itesms))
             for i in prod:
-                if i in str(userText).upper().split(" "):
+                if i.upper() in str(userText).upper().split(" "):
                     x = i
                     break
             if x is not None:
@@ -260,7 +263,7 @@ def get_bot_response():
                          "prev":{
                                "id":"%s",
                                "with":"ready_to_add",
-                               "cash":%s
+                               "cash":"%s"
                                 },
                          "msg":"%s $,Do you wanna add it" ,"list":[], "t_list":"v"
                         }''' % (id, x, price)
@@ -270,8 +273,8 @@ def get_bot_response():
                         "id":"%s",
                         "with":"ready"
                     },
-                    "msg":"sorry %s ,We don't have it" ,"list":[], "t_list":"v"
-                }''' % (id, user_name.split(" ")[0])
+                    "msg":"sorry,We don't have it" ,"list":[], "t_list":"v"
+                }''' % (id)
         elif "LIST" in str(userText).upper():
             # TODO:get ist of id
             l = db.getlistid(prev["id"])
@@ -283,7 +286,7 @@ def get_bot_response():
                             "msg":"Ok %s,If you wanna finish say finish to me ",
                             "list":%s,
                             "t_list":"v"
-                        }''' % (id, user_name.split(" ")[0], json.dumps(l))
+                        }''' % (id, user_name[0], json.dumps(l))
         elif "WHERE" in str(userText).upper():
             x = None
             for i in categ:
@@ -332,9 +335,8 @@ def get_bot_response():
             # TODO get courier name and number
             courier = db.getcourier()
             number = db.getcouriernumber(courier)
-            return '''{ "prev":{ "id":"%s", "with":"ready" }, "msg":"I Am happy to speak to you %s,your courier will be 
-            %s and his number is %s and he'll reach you in 45", "list":%s, "t_list":"v" }''' % (
-            id, user_name.split(" ")[0], courier, number, json.dumps(l))
+            return '''{ "prev":{ "id":"%s", "with":"ready" }, "msg":"I Am happy to speak to you %s,your courier will be %s and his number is %s and he'll reach you in 45", "list":%s, "t_list":"v" }''' % (
+            id, user_name[0], courier, number, json.dumps(l))
 
     return '''{
                     "prev":{

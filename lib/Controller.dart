@@ -20,7 +20,7 @@ class Controller {
     print(msg);
     print("ip is "+"${Controller.ip.split("%")[0]}/get");
     var req = await http.post(
-      "https://383ab3c0d009.ngrok.io/get",
+      "https://68a5a708ed82.ngrok.io/get",
       body:{
         'msg': msg,
         "prev":prev == null?'{"id":"","with":""}':jsonEncode(prev)
